@@ -261,37 +261,41 @@ class ExpoSpotifySDKModule : Module() {
     }
 
     AsyncFunction("pause") { promise: Promise ->
-        spotifyRemote?.let {
-            it.playerApi.pause()
+        val remote = spotifyRemote
+        if (remote != null) {
+            remote.playerApi.pause()
             promise.resolve(true)
-        } ?: run {
+        } else {
             promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
         }
     }
 
     AsyncFunction("resume") { promise: Promise ->
-        spotifyRemote?.let {
-            it.playerApi.resume()
+        val remote = spotifyRemote
+        if (remote != null) {
+            remote.playerApi.resume()
             promise.resolve(true)
-        } ?: run {
+        } else {
             promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
         }
     }
 
     AsyncFunction("skipToNext") { promise: Promise ->
-        spotifyRemote?.let {
-            it.playerApi.skipToNext()
+        val remote = spotifyRemote
+        if (remote != null) {
+            remote.playerApi.skipNext()
             promise.resolve(true)
-        } ?: run {
+        } else {
             promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
         }
     }
 
     AsyncFunction("skipToPrevious") { promise: Promise ->
-        spotifyRemote?.let {
-            it.playerApi.skipToPrevious()
+        val remote = spotifyRemote
+        if (remote != null) {
+            remote.playerApi.skipPrevious()
             promise.resolve(true)
-        } ?: run {
+        } else {
             promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
         }
     }
