@@ -72,5 +72,61 @@ public class ExpoSpotifySDKModule: Module {
             spotifySession.appRemote.disconnect()
             promise.resolve(true)
         }
+
+        AsyncFunction("pause") { (promise: Promise) in
+            if spotifySession.appRemote.isConnected {
+                spotifySession.appRemote.playerAPI?.pause { _, error in
+                    if let error = error {
+                        promise.reject("ERR_SPOTIFY_REMOTE", error.localizedDescription)
+                    } else {
+                        promise.resolve(true)
+                    }
+                }
+            } else {
+                promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected")
+            }
+        }
+
+        AsyncFunction("resume") { (promise: Promise) in
+            if spotifySession.appRemote.isConnected {
+                spotifySession.appRemote.playerAPI?.resume { _, error in
+                    if let error = error {
+                        promise.reject("ERR_SPOTIFY_REMOTE", error.localizedDescription)
+                    } else {
+                        promise.resolve(true)
+                    }
+                }
+            } else {
+                promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected")
+            }
+        }
+
+        AsyncFunction("skipToNext") { (promise: Promise) in
+            if spotifySession.appRemote.isConnected {
+                spotifySession.appRemote.playerAPI?.skip(toNext: { _, error in
+                    if let error = error {
+                        promise.reject("ERR_SPOTIFY_REMOTE", error.localizedDescription)
+                    } else {
+                        promise.resolve(true)
+                    }
+                })
+            } else {
+                promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected")
+            }
+        }
+
+        AsyncFunction("skipToPrevious") { (promise: Promise) in
+            if spotifySession.appRemote.isConnected {
+                spotifySession.appRemote.playerAPI?.skip(toPrevious: { _, error in
+                    if let error = error {
+                        promise.reject("ERR_SPOTIFY_REMOTE", error.localizedDescription)
+                    } else {
+                        promise.resolve(true)
+                    }
+                })
+            } else {
+                promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected")
+            }
+        }
     }
 }

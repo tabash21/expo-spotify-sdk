@@ -5,8 +5,10 @@ An Expo Module for the native [iOS](https://github.com/spotify/ios-sdk/) and [An
 ## Supported Features
 
 - Authentication
-
-More to come...
+- **Remote Playback & Control**:
+  - Connect to/Disconnect from Spotify App Remote
+  - Wake up and play logic (automatic app opening if needed)
+  - Play, Pause, Resume, Skip Next, and Skip Previous controls
 
 ## Installation
 
@@ -62,12 +64,60 @@ Starts the authentication process. Requires an array of OAuth scopes. If the Spo
 
 **Note:** The following scopes are not available to Expo Spotify SDK:
 
-  - user-read-playback-position
-  - user-soa-link
-  - user-soa-unlink
-  - user-manage-entitlements
-  - user-manage-partner
-  - user-create-partner
+- user-read-playback-position
+- user-soa-link
+- user-soa-unlink
+- user-manage-entitlements
+- user-manage-partner
+- user-create-partner
+
+---
+
+## Remote Control API
+
+These methods are available under the `Remote` object.
+
+### `Remote.connectToRemote(accessToken?: string): Promise<boolean>`
+
+Connects to the Spotify App Remote. If an `accessToken` is provided, it will be used for the connection. If not, it will try to use the current session's token.
+
+---
+
+### `Remote.disconnectFromRemote(): Promise<boolean>`
+
+Disconnects from the Spotify App Remote.
+
+---
+
+### `Remote.playURI(uri: string, accessToken?: string): Promise<boolean>`
+
+Plays a Spotify URI (track, album, playlist). If the app is not connected to the Remote, it will attempt to "wake up" the Spotify app (on iOS, this involves opening the Spotify app; on Android, it can often happen in the background).
+
+---
+
+### `Remote.pause(): Promise<boolean>`
+
+Pauses current playback.
+
+---
+
+### `Remote.resume(): Promise<boolean>`
+
+Resumes current playback.
+
+---
+
+### `Remote.skipToNext(): Promise<boolean>`
+
+Skips to the next track in the queue.
+
+---
+
+### `Remote.skipToPrevious(): Promise<boolean>`
+
+Skips to the previous track in the queue.
+
+---
 
 ### Types
 
@@ -142,8 +192,8 @@ All authentication requests will now be sent through the token swap server.
 
 This project has been heavily inspired by the following projects:
 
-* [react-native-spotify-remote](https://github.com/cjam/react-native-spotify-remote)
-* [expo-spotify](https://github.com/kvbalib/expo-spotify)
+- [react-native-spotify-remote](https://github.com/cjam/react-native-spotify-remote)
+- [expo-spotify](https://github.com/kvbalib/expo-spotify)
 
 ## Contribute
 

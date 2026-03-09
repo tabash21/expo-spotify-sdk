@@ -258,5 +258,41 @@ class ExpoSpotifySDKModule : Module() {
             SpotifyAppRemote.connect(context, connectionParams, connectionListener)
         }
     }
+
+    AsyncFunction("pause") { promise: Promise ->
+        spotifyRemote?.let {
+            it.playerApi.pause()
+            promise.resolve(true)
+        } ?: run {
+            promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
+        }
+    }
+
+    AsyncFunction("resume") { promise: Promise ->
+        spotifyRemote?.let {
+            it.playerApi.resume()
+            promise.resolve(true)
+        } ?: run {
+            promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
+        }
+    }
+
+    AsyncFunction("skipToNext") { promise: Promise ->
+        spotifyRemote?.let {
+            it.playerApi.skipToNext()
+            promise.resolve(true)
+        } ?: run {
+            promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
+        }
+    }
+
+    AsyncFunction("skipToPrevious") { promise: Promise ->
+        spotifyRemote?.let {
+            it.playerApi.skipToPrevious()
+            promise.resolve(true)
+        } ?: run {
+            promise.reject("ERR_NOT_CONNECTED", "Spotify Remote not connected", null)
+        }
+    }
   }
 }

@@ -25,10 +25,30 @@ function playURI(uri: string, accessToken?: string): Promise<boolean> {
   return ExpoSpotifySDKModule.playURI(uri, accessToken);
 }
 
+function pause(): Promise<boolean> {
+  return ExpoSpotifySDKModule.pause();
+}
+
+function resume(): Promise<boolean> {
+  return ExpoSpotifySDKModule.resume();
+}
+
+function skipToNext(): Promise<boolean> {
+  return ExpoSpotifySDKModule.skipToNext();
+}
+
+function skipToPrevious(): Promise<boolean> {
+  return ExpoSpotifySDKModule.skipToPrevious();
+}
+
 const Remote = {
   connectToRemote,
   disconnectFromRemote,
   playURI,
+  pause,
+  resume,
+  skipToNext,
+  skipToPrevious,
 };
 
 const Authenticate = {
