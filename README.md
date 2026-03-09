@@ -89,7 +89,7 @@ Disconnects from the Spotify App Remote.
 
 ---
 
-### `Remote.playURI(uri: string, accessToken?: string): Promise<boolean>`
+### `Remote.playURI(uri: string): Promise<boolean>`
 
 Plays a Spotify URI (track, album, playlist). If the app is not connected to the Remote, it will attempt to "wake up" the Spotify app (on iOS, this involves opening the Spotify app; on Android, it can often happen in the background).
 

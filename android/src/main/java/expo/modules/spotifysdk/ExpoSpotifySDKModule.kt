@@ -45,6 +45,7 @@ class ExpoSpotifySDKModule : Module() {
   private var spotifyRemote: SpotifyAppRemote? = null
   private var clientId: String? = null
   private var redirectUri: String? = null
+  private var accessToken: String? = null
 
   private val context
     get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
@@ -185,7 +186,8 @@ class ExpoSpotifySDKModule : Module() {
       }
     }
 
-    AsyncFunction("connectToRemote") { promise: Promise ->
+    AsyncFunction("connectToRemote") { token: String?, promise: Promise ->
+        accessToken = token
         val connectionParams = ConnectionParams.Builder(clientId)
             .setRedirectUri(redirectUri)
             .showAuthView(true)
@@ -212,7 +214,7 @@ class ExpoSpotifySDKModule : Module() {
         promise.resolve(true)
     }
 
-    AsyncFunction("playURI") { uri: String, accessToken: String?, promise: Promise ->
+    AsyncFunction("playURI") { uri: String, promise: Promise ->
         val currentClientId = clientId ?: run {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
             packageInfo.applicationInfo?.metaData?.getString("spotifyClientId")
@@ -234,7 +236,6 @@ class ExpoSpotifySDKModule : Module() {
                 if (accessToken != null) {
                     // Note: Spotify App Remote doesn't expose a direct "setToken" in all versions, 
                     // but it uses the system-wide Spotify login. 
-                    // However, we can use the token for other API calls if needed.
                 }
             }
             .build()

@@ -21,8 +21,8 @@ function disconnectFromRemote(): Promise<boolean> {
   return ExpoSpotifySDKModule.disconnectFromRemote();
 }
 
-function playURI(uri: string, accessToken?: string): Promise<boolean> {
-  return ExpoSpotifySDKModule.playURI(uri, accessToken);
+function playURI(uri: string): Promise<boolean> {
+  return ExpoSpotifySDKModule.playURI(uri);
 }
 
 function pause(): Promise<boolean> {

@@ -48,11 +48,7 @@ public class ExpoSpotifySDKModule: Module {
             promise.resolve(true)
         }
 
-        AsyncFunction("playURI") { (uri: String, accessToken: String?, promise: Promise) in
-            if let accessToken = accessToken {
-                spotifySession.appRemote.connectionParameters.accessToken = accessToken
-            }
-
+        AsyncFunction("playURI") { (uri: String, promise: Promise) in
             if spotifySession.appRemote.isConnected {
                 spotifySession.appRemote.playerAPI?.play(uri) { _, error in
                     if let error = error {
