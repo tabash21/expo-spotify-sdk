@@ -3,10 +3,9 @@ package expo.modules.spotifysdk
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.client.Call
-import com.spotify.protocol.client.Result
+import com.spotify.protocol.client.CallResult
 import com.spotify.protocol.client.ErrorCallback
-import com.spotify.protocol.client.ResultCallback
+import com.spotify.protocol.client.CallResult.ResultCallback
 
 import android.content.pm.PackageManager
 import expo.modules.kotlin.Promise
@@ -248,8 +247,8 @@ class ExpoSpotifySDKModule : Module() {
             .showAuthView(true)
             .apply {
                 if (accessToken != null) {
-                    // Note: Spotify App Remote doesn't expose a direct "setToken" in all versions, 
-                    // but it uses the system-wide Spotify login. 
+                    promise.reject("ERR_SPOTIFY_REMOTE", "Spotify access token is required", null) 
+                    return@AsyncFunction
                 }
             }
             .build()
