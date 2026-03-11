@@ -18,28 +18,46 @@ npx expo install @tabash21/expo-spotify-sdk
 
 ## Configuration
 
-Include the `expo-spotify-sdk` plugin in your `app.json/app.config.js` file with its required configuration:
+This package requires **runtime configuration** and a **one-time native setup**.
 
-```javascript
-  ...
-  "plugins": [
-    ["@tabash21/expo-spotify-sdk", {
-      "clientID": "<your-spotify-client-id>",
-      "scheme": "expo-spotify-sdk-example",
-      "host": "authenticate"
-    }]
-  ],
-  ...
+### 1. URL Scheme
+
+You **must** register a URL scheme for your app in `app.json` so Spotify can redirect back after authentication.
+
+```json
+{
+  "expo": {
+    "scheme": "my-spotify-app",
+    ...
+  }
+}
 ```
 
-- `clientID`: <string> the Spotify Client ID for your application
-- `scheme`: <string> the [URL scheme](https://docs.expo.dev/versions/latest/config/app/#scheme) to link into your app as part of the redirect URI
-- `host`: <string> the path of the redirect URI
+### 2. Expo Plugin (Required)
 
-> [!IMPORTANT]
-> Your **Redirect URI** will be automatically generated as: `<scheme>://<host>`.
-> You **must** register this exact URI in your [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications).
-> For example: `expo-spotify-sdk-example://authenticate`
+The Expo plugin is **required** to handle native dependencies (Android AAR) and query schemes (iOS `spotify:` permission). However, it **takes no configuration**:
+
+```json
+"plugins": [
+  "@tabash21/expo-spotify-sdk"
+]
+```
+
+---
+
+## API Reference
+
+### `authenticateAsync(config: SpotifyConfig): Promise<SpotifySession>`
+
+Starts the authentication process.
+
+#### Parameters
+
+- `scopes`: <string[]> Array of OAuth scopes (Required).
+- `clientID`: <string> Your Spotify Client ID (Required).
+- `redirectUri`: <string> Your registered Redirect URI (Required). Must match the scheme registered in `app.json` (e.g., `my-spotify-app://authenticate`).
+- `tokenSwapURL` (optional): The URL for swapping auth code for access token.
+- `tokenRefreshURL` (optional): The URL for renewing access token.
 
 ### Android Dashboard Configuration
 
@@ -141,6 +159,8 @@ interface SpotifyConfig {
   scopes: SpotifyScope[];
   tokenSwapURL?: string;
   tokenRefreshURL?: string;
+  clientID?: string;
+  redirectUri?: string;
 }
 
 interface SpotifySession {

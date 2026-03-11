@@ -38,8 +38,4 @@ export type SpotifyScopes =
   | "user-read-email"
   | "user-read-private";
 
-export interface SpotifyConfig {
-  clientID: string;
-  host: string;
-  scheme: string;
-}
+// No configuration interface needed for focus-less plugin

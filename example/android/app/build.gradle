@@ -117,12 +117,6 @@ android {
         versionCode 1
         versionName "1.0.0"
     
-        manifestPlaceholders = [
-          spotifyClientId: "your-client-id",
-          spotifyRedirectUri: "expo-spotify-sdk-example://authenticate",
-          redirectSchemeName: "expo-spotify-sdk-example",
-          redirectHostName: "authenticate"
-        ]
     }
     signingConfigs {
         debug {

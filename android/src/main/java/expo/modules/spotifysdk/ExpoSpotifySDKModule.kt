@@ -38,6 +38,12 @@ class SpotifyConfigOptions : Record {
 
   @Field
   val tokenRefreshURL: String? = null
+
+  @Field
+  val clientID: String? = null
+
+  @Field
+  val redirectUri: String? = null
 }
 
 class ExpoSpotifySDKModule : Module() {
@@ -55,16 +61,6 @@ class ExpoSpotifySDKModule : Module() {
   private val currentActivity
     get() = appContext.currentActivity ?: throw Exceptions.MissingActivity()
 
-  private fun fetchConfigFromManifest(): Pair<String?, String?> {
-    return try {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
-        val metaData = packageInfo.applicationInfo?.metaData
-        Pair(metaData?.getString("spotifyClientId"), metaData?.getString("spotifyRedirectUri"))
-    } catch (e: Exception) {
-        Pair(null, null)
-    }
-  }
-
   override fun definition() = ModuleDefinition {
 
     Name("ExpoSpotifySDK")
@@ -75,19 +71,15 @@ class ExpoSpotifySDKModule : Module() {
 
     AsyncFunction("authenticateAsync") { config: SpotifyConfigOptions, promise: Promise ->
       try {
-        val packageInfo =
-          context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
-        val applicationInfo = packageInfo.applicationInfo
-        val metaData = applicationInfo?.metaData
-        clientId = metaData?.getString("spotifyClientId")
-        redirectUri = metaData?.getString("spotifyRedirectUri")
+        clientId = config.clientID
+        redirectUri = config.redirectUri
 
         requestConfig = config
 
         if (clientId == null || redirectUri == null) {
           promise.reject(
             "ERR_EXPO_SPOTIFY_SDK",
-            "Missing Spotify configuration in AndroidManifest.xml. Ensure SPOTIFY_CLIENT_ID and SPOTIFY_REDIRECT_URI are set.",
+            "Missing Spotify configuration. Ensure clientID and redirectUri are provided in authenticateAsync.",
             null
           )
           return@AsyncFunction
@@ -100,9 +92,9 @@ class ExpoSpotifySDKModule : Module() {
         }
 
         val request = AuthorizationRequest.Builder(
-          clientId,
+          clientId!!,
           responseType,
-          redirectUri
+          redirectUri!!
         )
           .setScopes(config.scopes.toTypedArray())
           .build()
@@ -110,10 +102,10 @@ class ExpoSpotifySDKModule : Module() {
         authPromise = promise
         AuthorizationClient.openLoginActivity(currentActivity, requestCode, request)
 
-      } catch (e: PackageManager.NameNotFoundException) {
+      } catch (e: Exception) {
         promise.reject(
           "ERR_EXPO_SPOTIFY_SDK",
-          "Missing Spotify configuration in AndroidManifest.xml",
+          "Failed to start authentication: ${e.message}",
           e
         )
       }
@@ -202,14 +194,13 @@ class ExpoSpotifySDKModule : Module() {
     AsyncFunction("connectToRemote") { token: String?, promise: Promise ->
         accessToken = token
         
-        val (currentClientId, currentRedirectUri) = fetchConfigFromManifest()
-        if (currentClientId == null || currentRedirectUri == null) {
-            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found in Manifest", null)
+        if (clientId == null || redirectUri == null) {
+            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found. Call authenticateAsync first.", null)
             return@AsyncFunction
         }
 
-        val connectionParams = ConnectionParams.Builder(currentClientId)
-            .setRedirectUri(currentRedirectUri)
+        val connectionParams = ConnectionParams.Builder(clientId!!)
+            .setRedirectUri(redirectUri!!)
             .showAuthView(true)
             .build()
 
@@ -241,15 +232,13 @@ class ExpoSpotifySDKModule : Module() {
     }
 
     AsyncFunction("playURI") { uri: String, promise: Promise ->
-        val (currentClientId, currentRedirectUri) = fetchConfigFromManifest()
-        
-        if (currentClientId == null || currentRedirectUri == null) {
-            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found in Manifest", null)
+        if (clientId == null || redirectUri == null) {
+            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found. Call authenticateAsync first.", null)
             return@AsyncFunction
         }
 
-        val connectionParams = ConnectionParams.Builder(currentClientId)
-            .setRedirectUri(currentRedirectUri)
+        val connectionParams = ConnectionParams.Builder(clientId!!)
+            .setRedirectUri(redirectUri!!)
             .showAuthView(true)
             .apply {
                 if (accessToken == null) {

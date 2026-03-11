@@ -42,15 +42,6 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
-    <key>ExpoSpotifySDK</key>
-    <dict>
-      <key>host</key>
-      <string>authenticate</string>
-      <key>scheme</key>
-      <string>expo-spotify-sdk-example</string>
-      <key>clientID</key>
-      <string>your-client-id</string>
-    </dict>
     <key>LSApplicationQueriesSchemes</key>
     <array>
       <string>spotify</string>

@@ -21,8 +21,10 @@ public class ExpoSpotifySDKModule: Module {
 
             let tokenSwapURL = config["tokenSwapURL"] as? String
             let tokenRefreshURL = config["tokenRefreshURL"] as? String
+            let clientID = config["clientID"] as? String
+            let redirectUri = config["redirectUri"] as? String
 
-            spotifySession.authenticate(scopes: scopes, tokenSwapURL: tokenSwapURL, tokenRefreshURL: tokenRefreshURL).done { session in
+            spotifySession.authenticate(scopes: scopes, tokenSwapURL: tokenSwapURL, tokenRefreshURL: tokenRefreshURL, clientID: clientID, redirectUri: redirectUri).done { session in
                 promise.resolve([
                     "accessToken": session.accessToken,
                     "refreshToken": session.refreshToken,

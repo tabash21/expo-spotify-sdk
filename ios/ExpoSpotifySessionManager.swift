@@ -21,47 +21,22 @@ final class ExpoSpotifySessionManager: NSObject {
 
     static let shared = ExpoSpotifySessionManager()
 
-    private var expoSpotifyConfiguration: ExpoSpotifyConfiguration? {
-        guard let expoSpotifySdkDict = Bundle.main.object(forInfoDictionaryKey: "ExpoSpotifySDK") as? [String: String],
-              let clientID = expoSpotifySdkDict["clientID"],
-              let host = expoSpotifySdkDict["host"],
-              let scheme = expoSpotifySdkDict["scheme"] else
-        {
-            return nil
-        }
+    var configuration: SPTConfiguration?
 
-        return ExpoSpotifyConfiguration(clientID: clientID, host: host, scheme: scheme)
-    }
-
-    lazy var configuration: SPTConfiguration? = {
-        guard let clientID = expoSpotifyConfiguration?.clientID,
-              let redirectURL = expoSpotifyConfiguration?.redirectURL else {
-            NSLog("Invalid Spotify configuration")
-            return nil
-        }
-
-        return SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
-    }()
-
-    lazy var sessionManager: SPTSessionManager? = {
-        guard let configuration = configuration else {
-            return nil
-        }
-
-        return SPTSessionManager(configuration: configuration, delegate: self)
-    }()
+    var sessionManager: SPTSessionManager?
 
 
-    func authenticate(scopes: [String], tokenSwapURL: String?, tokenRefreshURL: String?) -> PromiseKit.Promise<SPTSession> {
+    func authenticate(scopes: [String], tokenSwapURL: String?, tokenRefreshURL: String?, clientID: String?, redirectUri: String?) -> PromiseKit.Promise<SPTSession> {
         return Promise { seal in
-            guard let clientID = self.expoSpotifyConfiguration?.clientID,
-                  let redirectURL = self.expoSpotifyConfiguration?.redirectURL else {
-                NSLog("Invalid Spotify configuration")
+            guard let finalClientID = clientID,
+                  let finalRedirectUri = redirectUri,
+                  let finalRedirectURL = URL(string: finalRedirectUri) else {
+                NSLog("Invalid Spotify configuration. Provide clientID and redirectUri.")
                 seal.reject(SessionManagerError.invalidConfiguration)
                 return
             }
             
-            let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
+            let configuration = SPTConfiguration(clientID: finalClientID, redirectURL: finalRedirectURL)
 
             if (tokenSwapURL != nil) {
                 configuration.tokenSwapURL = URL(string: tokenSwapURL ?? "")

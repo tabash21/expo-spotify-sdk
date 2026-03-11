@@ -12,6 +12,8 @@ export default function App() {
     try {
       setAuthToken("unknown");
       const session = await authenticateAsync({
+        clientID: "your-client-id",
+        redirectUri: "expo-spotify-sdk-example://authenticate",
         scopes: [
           "ugc-image-upload",
           "user-read-playback-state",

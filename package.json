@@ -20,7 +20,8 @@
     "expo",
     "expo-spotify-sdk",
     "ExpoSpotifySDK",
-    "Spotify"
+    "spotify",
+    "remote"
   ],
   "files": [
     "plugin/build",

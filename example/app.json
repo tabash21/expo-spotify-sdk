@@ -30,11 +30,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["../app.plugin.js", {
-        "host": "authenticate",
-        "scheme": "expo-spotify-sdk-example",
-        "clientID": "your-client-id"
-      }]
+      "../app.plugin.js"
     ]
   }
 }

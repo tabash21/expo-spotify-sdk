@@ -9,11 +9,9 @@ export interface SpotifyConfig {
   scopes: SpotifyScope[];
   tokenSwapURL?: string;
   tokenRefreshURL?: string;
+  clientID: string;
+  redirectUri: string;
 }
-
-// export interface AndroidSpotifyConfig extends SpotifyConfig {
-//   responseType: "token" | "code";
-// }
 
 export type SpotifyScope =
   | "ugc-image-upload"
