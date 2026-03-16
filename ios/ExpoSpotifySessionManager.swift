@@ -21,9 +21,23 @@ final class ExpoSpotifySessionManager: NSObject {
 
     static let shared = ExpoSpotifySessionManager()
 
-    var configuration: SPTConfiguration?
-
     var sessionManager: SPTSessionManager?
+
+    func setConfiguration(clientID: String, redirectUri: String) {
+        guard let redirectURL = URL(string: redirectUri) else { return }
+        let newConfig = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
+        
+        // Preserve URLs if they were already set
+        if let oldConfig = self.configuration {
+            newConfig.tokenSwapURL = oldConfig.tokenSwapURL
+            newConfig.tokenRefreshURL = oldConfig.tokenRefreshURL
+        }
+        
+        self.configuration = newConfig
+        // Re-initialize appRemote with new configuration
+        self.appRemote = SPTAppRemote(configuration: newConfig, logLevel: .debug)
+        self.appRemote.delegate = self
+    }
 
 
     func authenticate(scopes: [String], tokenSwapURL: String?, tokenRefreshURL: String?, clientID: String?, redirectUri: String?) -> PromiseKit.Promise<SPTSession> {
@@ -58,6 +72,10 @@ final class ExpoSpotifySessionManager: NSObject {
 
     func connectRemote() -> PromiseKit.Promise<Bool> {
         return Promise { seal in
+            guard configuration != nil else {
+                seal.reject(SessionManagerError.notInitialized)
+                return
+            }
             self.connectPromiseSeal = seal
             appRemote.connect()
         }

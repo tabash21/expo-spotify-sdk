@@ -2,6 +2,7 @@ import {
   SpotifyConfig,
   SpotifySession,
   SpotifyPlayerState,
+  SpotifyRemoteConfig,
 } from "./ExpoSpotifySDK.types";
 import ExpoSpotifySDKModule from "./ExpoSpotifySDKModule";
 
@@ -14,11 +15,21 @@ function authenticateAsync(config: SpotifyConfig): Promise<SpotifySession> {
     throw new Error("scopes are required");
   }
 
+  if (!config.clientID) {
+    throw new Error("clientID is required");
+  }
+
+  if (!config.redirectUri) {
+    throw new Error("redirectUri is required");
+  }
+
   return ExpoSpotifySDKModule.authenticateAsync(config);
 }
 
-function connectToRemote(accessToken?: string): Promise<boolean> {
-  return ExpoSpotifySDKModule.connectToRemote(accessToken);
+function connectToRemote(config?: SpotifyRemoteConfig | string): Promise<boolean> {
+  const options =
+    typeof config === "string" ? { accessToken: config } : config || {};
+  return ExpoSpotifySDKModule.connectToRemote(options);
 }
 
 function disconnectFromRemote(): Promise<boolean> {
@@ -60,8 +71,4 @@ const Remote = {
   getPlayerState,
 };
 
-const Authenticate = {
-  authenticateAsync,
-};
-
-export { isAvailable, Authenticate, Remote };
+export { isAvailable, authenticateAsync, Remote };

@@ -46,6 +46,17 @@ class SpotifyConfigOptions : Record {
   val redirectUri: String? = null
 }
 
+class SpotifyRemoteOptions : Record {
+  @Field
+  val accessToken: String? = null
+
+  @Field
+  val clientID: String? = null
+
+  @Field
+  val redirectUri: String? = null
+}
+
 class ExpoSpotifySDKModule : Module() {
 
   private val requestCode = 2095
@@ -127,6 +138,7 @@ class ExpoSpotifySDKModule : Module() {
                 "scope" to requestConfig?.scopes
               )
             )
+            this@ExpoSpotifySDKModule.accessToken = authResponse.accessToken
           }
 
           AuthorizationResponse.Type.CODE -> {
@@ -161,6 +173,8 @@ class ExpoSpotifySDKModule : Module() {
                   val expiresIn = json.getInt("expires_in")
                   val scope = json.getString("scope")
                   val expirationDate = System.currentTimeMillis() + expiresIn * 1000
+                  
+                  this@ExpoSpotifySDKModule.accessToken = accessToken
 
                   authPromise?.resolve(
                     mapOf(
@@ -191,11 +205,13 @@ class ExpoSpotifySDKModule : Module() {
       }
     }
 
-    AsyncFunction("connectToRemote") { token: String?, promise: Promise ->
-        accessToken = token
-        
+    AsyncFunction("connectToRemote") { options: SpotifyRemoteOptions, promise: Promise ->
+        options.clientID?.let { clientId = it }
+        options.redirectUri?.let { redirectUri = it }
+        options.accessToken?.let { accessToken = it }
+
         if (clientId == null || redirectUri == null) {
-            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found. Call authenticateAsync first.", null)
+            promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found. Call authenticateAsync first or provide them in connectToRemote.", null)
             return@AsyncFunction
         }
 
@@ -240,12 +256,6 @@ class ExpoSpotifySDKModule : Module() {
         val connectionParams = ConnectionParams.Builder(clientId!!)
             .setRedirectUri(redirectUri!!)
             .showAuthView(true)
-            .apply {
-                if (accessToken == null) {
-                    promise.reject("ERR_SPOTIFY_REMOTE", "Spotify access token is required. Use connectToRemote(token) first.", null) 
-                    return@AsyncFunction
-                }
-            }
             .build()
 
         val connectionListener = object : Connector.ConnectionListener {

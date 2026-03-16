@@ -36,12 +36,26 @@ public class ExpoSpotifySDKModule: Module {
             }
         }
 
-        AsyncFunction("connectToRemote") { (accessToken: String?, promise: Promise) in
-            if let accessToken = accessToken {
+        AsyncFunction("connectToRemote") { (config: [String: Any]?, promise: Promise) in
+            if let clientID = config?["clientID"] as? String,
+               let redirectUri = config?["redirectUri"] as? String {
+                spotifySession.setConfiguration(clientID: clientID, redirectUri: redirectUri)
+            }
+
+            if let accessToken = config?["accessToken"] as? String {
                 spotifySession.appRemote.connectionParameters.accessToken = accessToken
             } else if let session = spotifySession.currentSession {
                 spotifySession.appRemote.connectionParameters.accessToken = session.accessToken
-            } else {
+            }
+
+            // Verify we have a configuration before trying to connect
+            guard spotifySession.configuration != nil else {
+                promise.reject("ERR_CONFIG", "Spotify configuration not found. Call authenticateAsync first or provide clientID and redirectUri.")
+                return
+            }
+
+            // Verify we have a token (either passed or from session)
+            guard spotifySession.appRemote.connectionParameters.accessToken != nil else {
                 promise.reject("NO_SESSION", "No active Spotify session or access token provided")
                 return
             }

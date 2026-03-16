@@ -13,6 +13,12 @@ export interface SpotifyConfig {
   redirectUri: string;
 }
 
+export interface SpotifyRemoteConfig {
+  accessToken?: string;
+  clientID?: string;
+  redirectUri?: string;
+}
+
 export type SpotifyScope =
   | "ugc-image-upload"
   | "user-read-playback-state"
