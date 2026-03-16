@@ -94,7 +94,7 @@ Determines if the Spotify app is installed on the target device.
 These methods are available under the `Remote` object.
 
 ```typescript
-Remote.connectToRemote(config: SpotifyRemoteOptions): Promise<boolean>`
+Remote.connectToRemote(config?: SpotifyRemoteOptions): Promise<boolean>`
 ```
 
 #### Parameters - SpotifyRemoteOptions
@@ -206,8 +206,8 @@ interface SpotifyConfig {
   scopes: SpotifyScope[];
   tokenSwapURL?: string;
   tokenRefreshURL?: string;
-  clientID?: string;
-  redirectUri?: string;
+  clientID: string;
+  redirectUri: string;
 }
 
 interface SpotifySession {
@@ -218,7 +218,7 @@ interface SpotifySession {
 }
 
 
-interface SpotifyRemoteConfig {
+interface SpotifyRemoteOptions {
   accessToken?: string;
   clientID?: string;
   redirectUri?: string;

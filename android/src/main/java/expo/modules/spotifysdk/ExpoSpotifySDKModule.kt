@@ -205,10 +205,10 @@ class ExpoSpotifySDKModule : Module() {
       }
     }
 
-    AsyncFunction("connectToRemote") { options: SpotifyRemoteOptions, promise: Promise ->
-        options.clientID?.let { clientId = it }
-        options.redirectUri?.let { redirectUri = it }
-        options.accessToken?.let { accessToken = it }
+    AsyncFunction("connectToRemote") { options: SpotifyRemoteOptions?, promise: Promise ->
+        options?.clientID?.let { clientId = it }
+        options?.redirectUri?.let { redirectUri = it }
+        options?.accessToken?.let { accessToken = it }
 
         if (clientId == null || redirectUri == null) {
             promise.reject("ERR_CONFIG", "Spotify Client ID or Redirect URI not found. Call authenticateAsync first or provide them in connectToRemote.", null)

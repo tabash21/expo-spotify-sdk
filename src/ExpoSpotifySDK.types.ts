@@ -1,25 +1,25 @@
 export interface SpotifySession {
   accessToken: string;
-  refreshToken: string;
+  refreshToken: string | null;
   expirationDate: number;
-  scopes: SpotifyScope[];
+  scopes: SpotifyScopes[];
 }
 
 export interface SpotifyConfig {
-  scopes: SpotifyScope[];
+  scopes: SpotifyScopes[];
   tokenSwapURL?: string;
   tokenRefreshURL?: string;
   clientID: string;
   redirectUri: string;
 }
 
-export interface SpotifyRemoteConfig {
+export interface SpotifyRemoteOptions {
   accessToken?: string;
   clientID?: string;
   redirectUri?: string;
 }
 
-export type SpotifyScope =
+export type SpotifyScopes =
   | "ugc-image-upload"
   | "user-read-playback-state"
   | "user-modify-playback-state"
