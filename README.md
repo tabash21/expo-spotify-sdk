@@ -39,7 +39,13 @@ Add the plugin to your `app.json` file:
 
 ```json
 "plugins": [
-  "@tabash21/expo-spotify-sdk"
+  [
+    "@tabash21/expo-spotify-sdk",
+    {
+      "scheme": "my-spotify-app",
+      "host": "spotify-auth"
+    }
+  ]
 ]
 ```
 
@@ -169,7 +175,7 @@ Starts the authentication process. Requires an array of OAuth scopes. If the Spo
 
 - `scopes`: <string[]> Array of OAuth scopes (Required).
 - `clientID`: <string> Your Spotify Client ID (Required).
-- `redirectUri`: <string> Your registered Redirect URI (Required). Must match the scheme registered in `app.json` (e.g., `my-spotify-app://authenticate`).
+- `redirectUri`: <string> Your registered Redirect URI (Required). Must match the scheme/host registered in `app.json` (e.g., `my-spotify-app://spotify-auth`).
 - `tokenSwapURL` (optional): The URL for swapping auth code for access token.
 - `tokenRefreshURL` (optional): The URL for renewing access token.
 
