@@ -13,6 +13,15 @@ repositories {
     }
 }
 
+android {
+    defaultConfig {
+        manifestPlaceholders += [
+            "redirectSchemeName": "redirectSchemeName",
+            "redirectHostName": "redirectHostName"
+        ]
+    }
+}
+
 dependencies {
     implementation(name: 'spotify-app-remote-release-0.8.0', ext: 'aar')
 }
